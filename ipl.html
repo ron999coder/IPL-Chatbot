@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IPL Chatbot — Predefined Q&A</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ipl-blue:#0d47a1;
+      --ipl-purple:#5a2ea6;
+      --ipl-pink:#e91e63;
+      --ipl-gold:#ffd54f;
+      --ink:#0b1020;
+      --soft:#f3f6ff;
+      --card:#ffffff;
+      --success:#10b981;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:radial-gradient(1200px 600px at 20% -10%, #6c48ff22, transparent),
+                radial-gradient(1000px 500px at 120% 10%, #00bcd422, transparent),
+                linear-gradient(180deg, #0a0e1a 0%, #0f1630 100%);
+      color:#eef3ff; font-family:'Outfit', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; min-height:100vh;
+    }
+    header{
+      position:sticky; top:0; z-index:3;
+      background:linear-gradient(135deg, var(--ipl-blue), var(--ipl-purple));
+      border-bottom:1px solid #ffffff22;
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:14px 18px;}
+    .brand{display:flex; align-items:center; gap:14px}
+    .logo{
+      width:44px; height:44px; border-radius:12px; background:
+        conic-gradient(from 220deg, var(--ipl-gold), #fff8e1 40%, var(--ipl-gold) 80%),
+        linear-gradient(135deg, #ffffff11, #ffffff00);
+      display:grid; place-items:center; color:#1a1441; font-weight:800;
+      box-shadow:0 10px 30px #00000033, inset 0 0 0 2px #ffffff55;
+    }
+    .title{font-size:22px; font-weight:700; letter-spacing:0.2px}
+    .subtitle{opacity:.8; font-size:13px; margin-top:-4px}
+
+    .app{
+      display:grid; grid-template-columns: 350px 1fr; gap:18px; padding:22px 18px; max-width:1100px; margin:0 auto;
+    }
+    @media(max-width:960px){.app{grid-template-columns: 1fr;}}
+
+    /* Left column */
+    .panel{
+      background:linear-gradient(180deg, #141c38, #0f1630);
+      border:1px solid #ffffff1a; border-radius:18px; padding:16px; box-shadow:0 12px 40px #00000044;
+    }
+    .panel h3{margin:8px 0 6px; font-size:18px}
+    .chips{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px}
+    .chip{
+      background:linear-gradient(135deg, #ffffff08, #ffffff00);
+      border:1px solid #ffffff22; color:#e8ecff; padding:8px 12px; border-radius:999px; font-size:13px; cursor:pointer;
+      transition:.2s transform,.2s border-color,.2s background;
+    }
+    .chip:hover{transform:translateY(-1px); border-color:#ffffff55;}
+    .filter-row{display:flex; gap:10px; margin-top:10px}
+    select, .search{flex:1; background:#0e1531; color:#e9edff; border:1px solid #ffffff2a; border-radius:12px; padding:10px 12px;
+      outline:none; font-size:14px; transition:border .2s}
+    select:focus, .search:focus{border-color:#6a7cff}
+
+    .legend{
+      margin-top:14px; font-size:12px; opacity:.85; background:#0c1230; border:1px dashed #ffffff3a; padding:12px; border-radius:12px;
+    }
+
+    /* Right column: chat */
+    .chat{
+      background:#0c1330; border:1px solid #ffffff1a; border-radius:18px; display:flex; flex-direction:column; min-height:60vh;
+      box-shadow:0 12px 40px #00000044;
+    }
+    .chat-header{
+      display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid #ffffff1a;
+      background:linear-gradient(180deg, #0e1840, transparent);
+    }
+    .badge{font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid #ffffff2a; background:#ffffff0d}
+    .messages{flex:1; padding:18px; overflow:auto; display:flex; flex-direction:column; gap:14px}
+    .msg{display:flex; gap:10px; align-items:flex-start}
+    .bubble{padding:12px 14px; border-radius:14px; max-width:80%; line-height:1.5}
+    .user .bubble{background:#13214f; border:1px solid #4b5bd9; margin-left:auto}
+    .bot .bubble{background:#111a44; border:1px solid #ffffff22}
+    .avatar{width:32px; height:32px; border-radius:10px; display:grid; place-items:center; font-size:14px; background:#1b2355; border:1px solid #ffffff22}
+
+    .composer{display:flex; gap:10px; padding:14px; border-top:1px solid #ffffff1a; background:linear-gradient(180deg, transparent, #0c1230)}
+    .composer input{
+      flex:1; background:#0e1531; color:#e9edff; border:1px solid #ffffff2a; border-radius:12px; padding:12px 14px; outline:none;
+      font-size:15px; transition:border .2s
+    }
+    .composer input:focus{border-color:#6a7cff}
+    .btn{
+      background:linear-gradient(135deg, var(--ipl-purple), var(--ipl-blue));
+      border:1px solid #ffffff33; color:white; padding:12px 16px; border-radius:12px; font-weight:700; cursor:pointer;
+      box-shadow:0 8px 20px #00000044; transition:transform .14s ease, filter .2s ease;
+    }
+    .btn:hover{transform:translateY(-1px); filter:brightness(1.06)}
+
+    /* Stadium grid background overlay */
+    .stadium{
+      position:fixed; inset:0; pointer-events:none; opacity:.08; background-image:
+        radial-gradient(circle at 50% 50%, #ffffff22 0 2px, transparent 2px 100%),
+        linear-gradient(0deg, transparent 24px, #ffffff0d 25px),
+        linear-gradient(90deg, transparent 24px, #ffffff0d 25px);
+      background-size: 40px 40px, 25px 25px, 25px 25px;
+      mix-blend-mode:screen;
+    }
+
+    .footer-note{margin:20px auto 40px; text-align:center; font-size:12px; opacity:.75}
+    a{color:#a5b8ff}
+  </style>
+</head>
+<body>
+  <div class="stadium" aria-hidden="true"></div>
+  <header>
+    <div class="wrap">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🏏</div>
+        <div>
+          <div class="title">IPL Chatbot</div>
+          <div class="subtitle">Predefined questions • Offline • Fast</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="app">
+    <aside class="panel" id="left">
+      <h3>Quick questions</h3>
+      <div class="chips" id="quickChips"></div>
+
+      <div class="filter-row">
+        <input class="search" id="search" placeholder="Search questions (e.g., Orange Cap, playoffs)" />
+        <select id="category">
+          <option value="all">All topics</option>
+          <option value="basics">Basics</option>
+          <option value="format">Format & Rules</option>
+          <option value="awards">Awards & Caps</option>
+          <option value="teams">Teams</option>
+          <option value="logistics">Auction & Logistics</option>
+          <option value="tickets">Tickets & Venues</option>
+        </select>
+      </div>
+
+      <div class="legend" id="legend">
+        Tip: This bot answers only pre‑loaded IPL questions. Start typing to filter, or click a chip to ask instantly.
+      </div>
+    </aside>
+
+    <section class="chat" aria-live="polite">
+      <div class="chat-header">
+        <div class="badge">IPL Theme</div>
+        <div class="badge" id="countBadge">0 Qs loaded</div>
+      </div>
+      <div class="messages" id="messages"></div>
+      <div class="composer">
+        <input id="input" placeholder="Ask a predefined IPL question…" autocomplete="off" />
+        <button class="btn" id="send">Send</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer-note">Made for practice/education. Update answers each season as needed. ✨</div>
+
+  <script>
+    // --- Predefined IPL Q&A bank ---
+    const QA = [
+      { q: "What is the IPL?", a: "The Indian Premier League (IPL) is a professional T20 cricket league in India featuring 10 franchise teams. It usually runs March–May with a playoff in June.", tags:["basics"] },
+      { q: "How many teams play in the IPL?", a: "There are 10 teams: CSK, MI, KKR, SRH, RCB, RR, DC, PBKS, LSG, and GT.", tags:["basics","teams"] },
+      { q: "What is the match format?", a: "Each match is Twenty20: 20 overs per side, powerplay overs 1–6, strategic time‑outs, and DRS available.", tags:["format"] },
+      { q: "How does the IPL points table work?", a: "Win = 2 points, Tie/No‑Result = 1 point, Loss = 0. Net Run Rate (NRR) breaks ties.", tags:["format"] },
+      { q: "How do playoffs work?", a: "Top 4 advance: Qualifier 1 (1 vs 2), Eliminator (3 vs 4), Qualifier 2 (loser Q1 vs winner Eliminator), then Final.", tags:["format"] },
+      { q: "What is the Orange Cap?", a: "Awarded to the tournament's leading run‑scorer. The current holder can wear it on field; it changes hands as leaders change.", tags:["awards"] },
+      { q: "What is the Purple Cap?", a: "Awarded to the tournament's leading wicket‑taker. Like the Orange Cap, it can change hands during the season.", tags:["awards"] },
+      { q: "What is the Impact Player rule?", a: "Teams may substitute one player from a named list during the match, at specified times, to influence the game situation.", tags:["format","rules"] },
+      { q: "How are player auctions conducted?", a: "A pre‑season auction lets teams bid within a salary purse. There are capped/uncapped players, base prices, and retention rules.", tags:["logistics","auction"] },
+      { q: "What are team home venues?", a: "Each franchise has a primary home ground (e.g., CSK–Chennai, MI–Mumbai, KKR–Kolkata, SRH–Hyderabad, RCB–Bengaluru, RR–Jaipur, DC–Delhi, PBKS–Mullanpur/Mohali, LSG–Lucknow, GT–Ahmedabad).", tags:["teams","tickets","venues"] },
+      { q: "How can I buy IPL tickets?", a: "Tickets are sold via official franchise channels, partner platforms, and stadium box offices. Always use official links to avoid scams.", tags:["tickets"] },
+      { q: "What happens in a tie?", a: "A Super Over decides tied matches. If still tied in knockouts, additional Super Overs may be used.", tags:["format","rules"] },
+      { q: "What is NRR (Net Run Rate)?", a: "NRR = (total runs scored/overs faced) − (total runs conceded/overs bowled). It’s used to break points table ties.", tags:["format"] },
+      { q: "What is DLS?", a: "The Duckworth–Lewis–Stern (DLS) method revises targets when overs are lost to weather, considering resources like wickets and overs.", tags:["format","rules"] },
+      { q: "What is the Fair Play Award?", a: "An award to the team with the best on‑field conduct and adherence to spirit of cricket across the season.", tags:["awards"] },
+      { q: "Which teams have the most titles?", a: "Historically MI and CSK lead the title tally. Check the latest season summary to update exact counts.", tags:["awards","teams"] },
+      { q: "When is the IPL window?", a: "Typically March–May/June. The official schedule varies year to year based on ICC calendars and logistics.", tags:["basics"] },
+      { q: "What is player retention?", a: "Before mega/minor auctions, teams can retain a set number of players per BCCI rules, with purse deductions for retentions.", tags:["logistics","auction"] },
+      { q: "Are there mid‑season transfers?", a: "Yes, in a controlled transfer window for players who meet appearance criteria, subject to BCCI guidelines.", tags:["logistics"] },
+      { q: "What are powerplay restrictions?", a: "Overs 1–6: only two fielders outside the 30‑yard circle. After that, up to five outside (subject to conditions).", tags:["format","rules"] },
+    ];
+
+    // --- Elements ---
+    const messages = document.getElementById('messages');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('send');
+    const quickChips = document.getElementById('quickChips');
+    const search = document.getElementById('search');
+    const category = document.getElementById('category');
+    const countBadge = document.getElementById('countBadge');
+
+    countBadge.textContent = `${QA.length} Qs loaded`;
+
+    // --- Render helpers ---
+    const scrollToEnd = () => { messages.scrollTop = messages.scrollHeight; };
+
+    function addMessage(role, text){
+      const row = document.createElement('div');
+      row.className = `msg ${role}`;
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      avatar.textContent = role === 'user' ? '🧑' : '🤖';
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.innerHTML = text;
+      row.appendChild(avatar); row.appendChild(bubble); messages.appendChild(row);
+      scrollToEnd();
+    }
+
+    function reply(text){ addMessage('bot', text); }
+
+    // --- Basic search & match ---
+    function tokenize(s){
+      return s.toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(Boolean);
+    }
+    function score(query, candidate){
+      const q = tokenize(query), c = tokenize(candidate);
+      if(candidate.toLowerCase().includes(query.toLowerCase())) return 1.0;
+      const setC = new Set(c);
+      let hits = 0; q.forEach(w=>{ if(setC.has(w)) hits++; });
+      return hits / Math.max(1, q.length);
+    }
+    function findAnswer(query, topic){
+      // Filter by category
+      const pool = QA.filter(item => topic==='all' || item.tags.includes(topic));
+      // Score
+      let best = null; let bestScore = 0; let alts = [];
+      pool.forEach(item=>{
+        const s = score(query, item.q + ' ' + item.tags.join(' '));
+        if(s>bestScore){ bestScore = s; best = item; }
+      });
+      // Alternatives (top 5 by includes)
+      alts = pool
+        .map(it=>({it, s: score(query, it.q)}))
+        .sort((a,b)=>b.s-a.s)
+        .slice(0,5)
+        .map(x=>x.it.q);
+      return { best, bestScore, alts };
+    }
+
+    function handleAsk(text){
+      if(!text.trim()) return;
+      addMessage('user', text);
+      const {best, bestScore, alts} = findAnswer(text, category.value);
+      if(best && bestScore>=0.34){ // threshold for a decent match
+        reply(`<strong>${best.q}</strong><br>${best.a}`);
+      } else {
+        const sug = alts.filter(q=>q.toLowerCase()!=text.toLowerCase()).slice(0,3)
+          .map(q=>`<button class="chip" data-q="${q.replace(/\"/g,'&quot;')}">${q}</button>`).join(' ');
+        reply(`I can answer only predefined IPL questions. Try one of these: ${sug || 'browse the chips on the left.'}`);
+        attachChipHandlers();
+      }
+    }
+
+    // --- Chips & filters ---
+    function renderChips(list){
+      quickChips.innerHTML = '';
+      list.forEach(({q})=>{
+        const b = document.createElement('button');
+        b.className = 'chip'; b.textContent = q; b.setAttribute('data-q', q);
+        quickChips.appendChild(b);
+      });
+      attachChipHandlers();
+    }
+    function attachChipHandlers(){
+      document.querySelectorAll('.chip').forEach(el=>{
+        el.onclick = ()=>{
+          const q = el.getAttribute('data-q');
+          input.value = q; handleAsk(q);
+        };
+      });
+    }
+
+    function filterChips(){
+      const term = search.value.trim().toLowerCase();
+      const topic = category.value;
+      const items = QA.filter(x => (topic==='all' || x.tags.includes(topic)) && (!term || x.q.toLowerCase().includes(term)) );
+      renderChips(items);
+      document.getElementById('legend').textContent = items.length ? `Showing ${items.length} question(s)` : 'No matches. Try another term/topic.';
+    }
+
+    // Initial UI state
+    renderChips(QA.slice(0,12)); // show a subset as quick-start
+
+    // Events
+    sendBtn.onclick = ()=>{ handleAsk(input.value); input.value=''; input.focus(); };
+    input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ handleAsk(input.value); input.value=''; } });
+    search.addEventListener('input', filterChips);
+    category.addEventListener('change', filterChips);
+
+    // Welcome message
+    reply("Hi! I’m your IPL FAQ bot. Ask about <em>points table, playoffs, Orange/Purple Cap, powerplays, DLS, auctions</em> and more. Or click a quick question on the left.");
+  </script>
+</body>
+</html>
